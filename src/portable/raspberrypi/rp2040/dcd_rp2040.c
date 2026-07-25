@@ -66,6 +66,13 @@ TU_ATTR_ALWAYS_INLINE static inline struct hw_endpoint* hw_endpoint_get_by_addr(
   return hw_endpoint_get_by_num(num, dir);
 }
 
+// NOBD hot-buffer hook: expose an endpoint's DPRAM data buffer so the app can overwrite the
+// report already staged for the SIE in place (freshest-state-always: a new press updates the
+// pending report instead of waiting to re-queue). Returns NULL if the endpoint isn't open.
+uint8_t* dcd_rp2040_ep_dpram(uint8_t ep_addr) {
+  return hw_endpoint_get_by_addr(ep_addr)->hw_data_buf;
+}
+
 static void _hw_endpoint_alloc(struct hw_endpoint* ep, uint8_t transfer_type) {
   // size must be multiple of 64
   uint size = tu_div_ceil(ep->wMaxPacketSize, 64) * 64u;
