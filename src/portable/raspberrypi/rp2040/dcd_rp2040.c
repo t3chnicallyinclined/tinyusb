@@ -69,6 +69,13 @@ TU_ATTR_ALWAYS_INLINE static inline hw_endpoint_t *hw_endpoint_get_by_addr(uint8
   return hw_endpoint_get(num, dir);
 }
 
+// NOBD hot-buffer hook: expose an endpoint's DPRAM data buffer so the app can overwrite the
+// report already staged for the SIE in place (freshest-state-always: a new press updates the
+// pending report instead of waiting to re-queue). Returns NULL if the endpoint isn't open.
+uint8_t* dcd_rp2040_ep_dpram(uint8_t ep_addr) {
+  return hw_endpoint_get_by_addr(ep_addr)->dpram_buf;
+}
+
 TU_ATTR_ALWAYS_INLINE static inline io_rw_32 *get_ep_ctrl(uint8_t epnum, tusb_dir_t dir) {
   if (epnum == 0) {
     // EP0 has no endpoint control register because the buffer offsets are fixed and always enabled
